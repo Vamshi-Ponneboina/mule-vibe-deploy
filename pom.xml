@@ -39,28 +39,20 @@
                 <version>${mule.maven.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <classifier>mule-application</classifier>
+                    <cloudhub2Deployment>
+                        <uri>https://anypoint.mulesoft.com</uri>
+                        <provider>MC</provider>
+                        <environment>Sandbox</environment>
+                        <server>Repository</server>
+                        <applicationName>${project.artifactId}</applicationName>
+                        <replicas>1</replicas>
+                        <deploymentSettings>
+                            <instanceType>nano</instanceType>
+                        </deploymentSettings>
+                    </cloudhub2Deployment>
                 </configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.mule.tools.maven</groupId>
-				<artifactId>mule-maven-plugin</artifactId>
-				<version>${mule.maven.plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<classifier>mule-application</classifier>
-					<cloudhub2Deployment>
-				    <uri>https://anypoint.mulesoft.com</uri>
-						<provider>MC</provider>
-						<environment>Sandbox</environment>
-						<server>Repository</server>
-						<applicationName>${project.artifactId}</applicationName>
-						<replicas>1</replicas>
-						<deploymentSettings>
-							<instanceType>nano</instanceType>
-						</deploymentSettings>
-					</cloudhub2Deployment>
-				</configuration>
-			</plugin>
+            </plugin>
 		</plugins>
     </build>
     
