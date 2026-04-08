@@ -52,7 +52,7 @@
 						<muleVersion>${app.runtime}</muleVersion>
 						<applicationName>${project.artifactId}</applicationName>
 						<environment>Sandbox</environment>
-						<target>CloudHub-US-East-2</target>
+						<region>us-east-2</region>
 						<provider>MC</provider>
 						<replicas>1</replicas>
 						<replicaSize>0.1</replicaSize>
