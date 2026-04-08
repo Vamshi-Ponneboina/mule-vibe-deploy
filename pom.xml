@@ -24,12 +24,6 @@
             <version>1.11.1</version>
             <classifier>mule-plugin</classifier>
         </dependency>
-        <dependency>
-            <groupId>365d8e9a-5b53-4d65-8776-8d29047c4ac6</groupId>
-            <artifactId>common-framework</artifactId>
-            <version>1.0.4</version>
-            <classifier>mule-plugin</classifier>
-        </dependency>
     </dependencies>
 
     <build>
