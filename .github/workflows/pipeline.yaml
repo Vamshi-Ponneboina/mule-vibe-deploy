@@ -1,0 +1,94 @@
+name: Deploy to CloudHub 2.0
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  MULE_VERSION: 4.11.2
+  APPLICATION_NAME: hello-world-api
+  ENVIRONMENT: Sandbox
+  TARGET: CloudHub-US-East-2
+  REGION: us-east-2
+  REPLICAS: 1
+  REPLICA_SIZE: 0.1
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    - name: Set up Maven settings
+      run: |
+        mkdir -p ~/.m2
+        cat > ~/.m2/settings.xml << EOF
+        <?xml version="1.0"?>
+        <settings>
+          <pluginGroups>
+            <pluginGroup>org.mule.tools</pluginGroup>
+          </pluginGroups>
+          <servers>
+            <server>
+              <id>Repository</id>
+              <username>~~~Client~~~</username>
+              <password>${{ secrets.CLIENT_ID }}~?~${{ secrets.CLIENT_SECRET }}</password>
+            </server>
+          </servers>
+        </settings>
+        EOF
+        
+    - name: Build application
+      run: mvn clean compile
+      
+    - name: Package application
+      run: mvn package
+      
+    - name: Deploy to CloudHub 2.0
+      run: |
+        mvn deploy -DmuleDeploy \
+          -Danypoint.username="~~~Client~~~" \
+          -Danypoint.password="${{ secrets.CLIENT_ID }}~?~${{ secrets.CLIENT_SECRET }}" \
+          -DcloudHubDeployment.uri="https://anypoint.mulesoft.com" \
+          -DcloudHubDeployment.muleVersion="${MULE_VERSION}" \
+          -DcloudHubDeployment.applicationName="${APPLICATION_NAME}" \
+          -DcloudHubDeployment.environment="${ENVIRONMENT}" \
+          -DcloudHubDeployment.target="${TARGET}" \
+          -DcloudHubDeployment.provider="MC" \
+          -DcloudHubDeployment.replicas="${REPLICAS}" \
+          -DcloudHubDeployment.replicaSize="${REPLICA_SIZE}" \
+          -DcloudHubDeployment.businessGroupId="2a5a1d9d-52df-41df-b723-b0e38c5a49a2"
+          
+    - name: Deployment Status
+      if: success()
+      run: |
+        echo "✅ Deployment to CloudHub 2.0 completed successfully!"
+        echo "📱 Application: ${APPLICATION_NAME}"
+        echo "🌍 Environment: ${ENVIRONMENT}"
+        echo "📍 Region: ${TARGET}"
+        echo "⚡ Replicas: ${REPLICAS}"
+        echo "💾 vCores: ${REPLICA_SIZE}"
+        
+    - name: Deployment Failed
+      if: failure()
+      run: |
+        echo "❌ Deployment to CloudHub 2.0 failed!"
+        echo "Please check the logs above for error details."
+        exit 1
