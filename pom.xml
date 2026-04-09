@@ -42,9 +42,7 @@
                     <classifier>mule-application</classifier>
                     <cloudhub2Deployment>
                         <uri>https://anypoint.mulesoft.com</uri>
-                        <provider>MC</provider>
                         <environment>Sandbox</environment>
-						 <target>Cloudhub-US-East-2</target>
                         <server>Repository</server>
                         <applicationName>${project.artifactId}</applicationName>
                         <replicas>1</replicas>
